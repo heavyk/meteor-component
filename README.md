@@ -2,9 +2,7 @@
 
 you will need to do some trickery for this to work... that is until they have npm package dependencies built into meteor (it's coming! eventually...) for now, try this:
 
-	npm install component component-builder
-	cd node_modules/component && npm link && cd ../..
-	cd node_modules/component-builder && npm link && cd ../..
+I am working on a Npm dependency module for meteor... not ready yet though...
 
 # Notes
 

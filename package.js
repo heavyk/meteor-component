@@ -19,11 +19,6 @@ const css_path = Path.join(odir, 'build.css');
 const js_path = Path.join(odir, 'build.js');
 const component_json_path = Path.join(".meteor", "component.json");
 
-Meteor.__COMPONENT_PRESENT = true;
-// TODO:
-// Meteor.__COMPONENT_PRESENT = require('component/package.json').version;
-// Meteor.__COMPONENT_BUILDER_PRESENT = require('component-builder/package.json').version;
-
 try {
   fs.mkdirSync(odir);
 } catch(e) {}
@@ -203,10 +198,6 @@ Package.register_extension(
   }
 );
 
-/*
-//TODO: I'm not yet sure on how to write tests for this. get to it before releasing
 Package.on_test(function (api) {
-  api.add_files(['component_tests.ls', 'component_tests.js'],
-                ['client', 'server']);
+  api.add_files(['component_tests.js'], 'server');
 });
-*/
