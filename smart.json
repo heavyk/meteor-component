@@ -1,0 +1,8 @@
+{
+    "name": "component",
+    "description": "CLI tool for creating, building, and installing components",
+    "homepage": "https://github.com/heavyk/meteor-component",
+    "author": "Kenneth Bentley (https://github.com/heavyk)",
+    "version": "0.1.0",
+    "git": "https://github.com/heavyk/meteor-component.git"
+}
