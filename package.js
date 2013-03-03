@@ -35,8 +35,9 @@ Package.register_extension(
       var conf = require(source_path);
       var pkgs = conf.dependencies;
       if(!pkgs) return;
+      var st, this_st = fs.statSync(source_path);
       Fiber(function() {
-        var st, this_st = fs.statSync(source_path);
+        var future = new Future;
         ///*
         try {
           st = fs.statSync(component_json_path);
@@ -101,26 +102,29 @@ Package.register_extension(
 
           batch = new Batch
           _.each(pkgs, function(url, pkg) {
+
+            var parts = pkg.split('@');
+            var name = parts.shift();
+            var version = parts.shift() || 'master';
+            var rname = pkg.replace('/', '-');
+            //TODO: if some time has passed, say 2-3 days, do an update instead of skipping it (for master)
+            //TODO: when implementing specific versions, do a version compare here and update if necessary
+            if(fs.existsSync(Path.join(odir, name))) return;
             batch.push(function(done) {
-              var parts = pkg.split('@');
-              var name = parts.shift();
-              var version = parts.shift() || 'master';
-              var rname = pkg.replace('/', '-');
-              //TODO: if some time has passed, say 2-3 days, do an update instead of skipping it (for master)
-              //TODO: when implementing specific versions, do a version compare here and update if necessary
-              if(fs.existsSync(Path.join(odir, name))) return;
               install(name, version, done);
             });
           });
-          var future = new Future;
+
           batch.end(function() {future.return()});
-          future.wait()
+          future.wait();
+          future = void(8);
           try {
             fs.utimesSync(js_path, new Date, new Date);
           } catch(e) {}
         }
+      //}).run();
         //*/
-
+      //Fiber(function() {
         try {
           st = fs.statSync(js_path);
         } catch(e) {}
@@ -132,11 +136,11 @@ Package.register_extension(
           builder.copyFiles();
           builder.addLookup(Path.join(process.cwd(), ".meteor", "components"));
           console.log();
-          future = new Future;
+          if(!future) future = new Future;
           builder.build(function(err, obj){
             if (err) {
               Component.utils.fatal(err.message);
-              future.return(err);
+              return future.return(err);
             }
 
             fs.writeFileSync(css_path, obj.css);
@@ -200,4 +204,5 @@ Package.register_extension(
 
 Package.on_test(function (api) {
   api.add_files(['component_tests.js'], 'server');
+  api.add_files(['client_tests.js'], 'client');
 });
